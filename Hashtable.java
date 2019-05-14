@@ -1,34 +1,11 @@
-/*Alex Kowalczuk
-Practice Assigment 11 - Extra Credit
-MAy 12, 2018
+/*
+By: Alex Kowalczuk
+CS245 - Practice Assigment 11 - Extra Credit
+May 12, 2019 
 */
 
 import java.util.*;
 import java.util.Set;
-
-public class Hashnode{
-	public String key;
-	public String value;
-	public Boolean deleted;
-
-	public Hashnode(String key, String value){
-		this.key = key;
-		this.value = value;
-		this.deleted = false;
-	}
-
-	String get_key(){
-		return this.key;
-	}
-
-	String get_val(){
-		return this.value;
-	}
-
-	@Override public String toString() {
-		return this.key + " => " + this.value;
-	}
-}
 
 public class Hashtable{
 	public int size;
@@ -46,17 +23,52 @@ public class Hashtable{
 		this.length = 0;
 	}
 
-		public void put(String key, String value){
+	public String get(String key){
+		int index = Math.abs(key.hashCode()) % this.size;
+
+		for (int i = 0; i < this.size; ++i) {
+			int computedIndex = (index + i) % this.size;
+
+			if (array[computedIndex] != null &&
+				array[computedIndex].deleted == false &&
+				array[computedIndex].key.equals(key)) {
+				return array[computedIndex].value;
+			}
+		}
+		
+		return null;
+	}
+	
+	public boolean containsKey(String key){
+		int index = Math.abs(key.hashCode()) % this.size;
+
+		for (int i = 0; i < this.size; ++i) {
+			int computedIndex = (index + i) % this.size;
+
+			if (array[computedIndex] != null &&
+				array[computedIndex].deleted == false &&
+				array[computedIndex].key.equals(key)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+
+	public void put(String key, String value){
 		if ((double)this.length > (double)this.size*(3.0/4.0)) {
 			resize();
 		}
 		length++;
+
 		int index = Math.abs(key.hashCode()) % this.size;
 		Hashnode node;
 
 		for (int i = 0; i < this.size; i++) {
 			int computedIndex = (index + i) % this.size;
 			node = array[computedIndex];
+
 			if (node == null) {
 				 node = new Hashnode(key, value);
 				 array[computedIndex] = node;
@@ -71,40 +83,11 @@ public class Hashtable{
 		}
 	}
 
-	public boolean containsKey(String key){
-		int index = Math.abs(key.hashCode()) % this.size;
-
-		for (int i = 0; i < this.size; ++i) {
-			int computedIndex = (index + i) % this.size;
-
-			if (array[computedIndex] != null &&
-				array[computedIndex].deleted == false &&
-				array[computedIndex].key.equals(key)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public String get(String key){
-		int index = Math.abs(key.hashCode()) % this.size;
-
-		for (int i = 0; i < this.size; ++i) {
-			int computedIndex = (index + i) % this.size;
-
-			if (array[computedIndex] != null &&
-				array[computedIndex].deleted == false &&
-				array[computedIndex].key.equals(key)) {
-				return array[computedIndex].value;
-			}
-		}
-		return null;
-	}
-
 	public void resize() {
 		int newSize = size * 4;
 
 		Hashtable temp = new Hashtable(newSize);
+
 		for (int i = 0; i < this.size; i++) {
 			Hashnode node = array[i];
 			if (node == null || node.deleted) 
@@ -130,6 +113,32 @@ public class Hashtable{
 				return node.value;
 			}
 		}
-		throw new RuntimeException("No pair found for key: "+key);
+
+		throw new RuntimeException("No pair found for this key: "+key);
+	}
+}
+
+class Hashnode{
+	public String key;
+	public String value;
+	public Boolean deleted;
+
+	public Hashnode(String key, String value){
+		this.key = key;
+		this.value = value;
+		this.deleted = false;
+	}
+
+	String get_key(){
+		return this.key;
+	}
+
+	String get_val(){
+		return this.value;
+	}
+
+
+	@Override public String toString() {
+		return this.key + " => " + this.value;
 	}
 }
